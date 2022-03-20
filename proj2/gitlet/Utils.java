@@ -236,4 +236,9 @@ class Utils {
         System.out.printf(msg, args);
         System.out.println();
     }
+
+    static void printAndExit(String error) {
+        System.out.println(error);
+        System.exit(0);
+    }
 }
