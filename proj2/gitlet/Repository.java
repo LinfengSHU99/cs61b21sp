@@ -1,10 +1,6 @@
 package gitlet;
-
-import org.checkerframework.checker.units.qual.A;
-
 import java.io.File;
 import java.util.*;
-
 import static gitlet.Utils.*;
 import static gitlet.Commit.*;
 import static gitlet.Tools.*;
