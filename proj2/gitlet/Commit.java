@@ -4,13 +4,11 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static gitlet.Tools.*;
 import static gitlet.Repository.*;
@@ -46,7 +44,13 @@ public class Commit implements Serializable {
     public Commit(Commit ... parent_arr)  {
         map = new HashMap<>();
         branch = new ArrayList<>();
-        date = LocalDateTime.of(LocalDate.of(1970, 1,1), LocalTime.of(0,0,0)).toString();
+//        date = LocalDateTime.of(LocalDate.of(1970, 1,1), LocalTime.of(0,0,0)).toString();
+        Date date1 = new Date();
+        date1.setTime(0);
+        String pattern = "EEE MMM d HH:mm:ss YYYY Z";
+
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        date = sdf.format(date1);
         if (parent_arr.length > 0) {
             parents = new ArrayList<>();
             for (Commit p : parent_arr) {
@@ -80,7 +84,10 @@ public class Commit implements Serializable {
         }
         addBranch(current_branch);
         this.message = message;
-        date = LocalDateTime.of(LocalDate.now(), LocalTime.now()).toString();
+//        date = LocalDateTime.of(LocalDate.now(), LocalTime.now()).toString();
+        String pattern = "EEE MMM d HH:mm:ss YYYY Z";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        date = sdf.format(new Date());
         log_sha1 = getSha1OfCommit(this);
 
         //TODO

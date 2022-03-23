@@ -1,5 +1,6 @@
 package gitlet;
 import java.io.File;
+import java.time.ZoneId;
 import java.util.*;
 import static gitlet.Utils.*;
 import static gitlet.Commit.*;
@@ -91,7 +92,6 @@ public class Repository {
 
         System.out.println("=== Staged Files ===");
         ArrayList<String> filenames = new ArrayList<>(Stage.map.keySet());
-        filenames.addAll(Stage.mapForRm.keySet());
         filenames.sort(new Comparator<String>() {
             @Override
             public int compare(String s, String t1) {
@@ -104,6 +104,17 @@ public class Repository {
         System.out.println("");
 
         System.out.println("=== Removed Files ===");
+        filenames = new ArrayList<>(Stage.mapForRm.keySet());
+        filenames.sort(new Comparator<String>() {
+            @Override
+            public int compare(String s, String t1) {
+                return s.compareTo(t1);
+            }
+        });
+        for (String filename : filenames) {
+            System.out.println(filename);
+        }
+        System.out.println("");
         System.out.println("=== Modifications Not Staged For Commit ===");
         System.out.println("=== Untracked Filed ===");
     }
@@ -123,6 +134,7 @@ public class Repository {
     public static void log() {
         Commit p = head;
         List<String> parents = p.getParents();
+        ZoneId zoneid = ZoneId.systemDefault();
         while (p != null) {
             System.out.println("===");
             System.out.println("commit " + p.log_sha1);
