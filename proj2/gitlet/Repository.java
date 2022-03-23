@@ -123,6 +123,7 @@ public class Repository {
         if (Stage.map.containsKey(filename)) {
             Stage.map.remove(filename);
             flag = false;
+            return;
         }
         head = Commit.loadHead();
         if (head.map.containsKey(filename)) {
