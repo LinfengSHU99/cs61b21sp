@@ -45,7 +45,41 @@ public class Main {
                 break;
             case "rm":
                 if (args.length != 2) printAndExit("Incorrect operands.");
-
+                Repository.rm(args[1]);
+                break;
+            case "log":
+                if (args.length != 1) printAndExit("Incorrect operands.");
+                Repository.log();
+                break;
+            case "checkout":
+                if (args.length == 2) {
+                    Repository.checkoutBranch(args[1]);
+                }
+                else if (args.length == 3) {
+                    Repository.checkoutFile(args[2]);
+                }
+                else if (args.length == 4) {
+                    Repository.checkoutCommitFile(args[1], args[3]);
+                }
+                else {
+                    printAndExit("Incorrect operands.");
+                }
+                break;
+            case "branch":
+                if (args.length != 2) printAndExit("Incorrect operands.");
+                Repository.branch(args[1]);
+                break;
+            case "merge":
+                if (args.length != 2) printAndExit("Incorrect operands.");
+                Repository.merge(args[1]);
+                break;
+            case "global-log":
+                if (args.length != 1) printAndExit("Incorrect operands.");
+                Repository.globalLog();
+                break;
+            case "rm-branch":
+                if (args.length != 2) printAndExit("Incorrect operands.");
+                Repository.rmBranch(args[1]);
             // TODO: FILL THE REST IN
         }
         Repository.saveStatus();

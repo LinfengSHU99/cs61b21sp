@@ -2,6 +2,7 @@ package gitlet;
 
 // TODO: any imports you need here
 
+import java.io.File;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,7 +12,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static gitlet.Repository.blobs;
+import static gitlet.Tools.*;
+import static gitlet.Repository.*;
 import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.
@@ -32,39 +34,42 @@ public class Commit implements Serializable {
     /** The message of this Commit. */
     private String message;
     private String date;
-    private String log_sha1;
+    String log_sha1;
+    // store file name and its sha1
     HashMap<String, String> map;
-    private List<Commit> parents;
+    private List<String> parents;
     public static Commit for_commit;
-    public static Commit head;
-    private String branch;
+    private List<String> branch;
 
     // after a commit, execute this function to set an empty status, call update to commit.
+    // args here are the parents of the new commit.
     public Commit(Commit ... parent_arr)  {
         map = new HashMap<>();
+        branch = new ArrayList<>();
         date = LocalDateTime.of(LocalDate.of(1970, 1,1), LocalTime.of(0,0,0)).toString();
         if (parent_arr.length > 0) {
             parents = new ArrayList<>();
-            parents.addAll(Arrays.asList(parent_arr));
-        }
-        if (parents == null) return;
-        for (Commit parent : parents) {
-            for (String filename : parent.map.keySet()) {
-                map.put(filename, parent.map.get(filename));
+            for (Commit p : parent_arr) {
+                parents.add(p.log_sha1);
             }
         }
-        branch = parents.get(0).branch;
+        if (parents == null) return;
+        for (String sha1 : parents) {
+            Commit p = loadCommit(sha1);
+            for (String filename : p.map.keySet()) {
+                map.put(filename, p.map.get(filename));
+            }
+        }
+
     }
-//    public Commit(String message) {
-//        this.message = message;
-//        date = LocalDate.now().toString();
-//
-//    }
+
     public static void init() {
         for_commit = new Commit();
-        for_commit.branch = "master";
+        for_commit.addBranch(current_branch);
         for_commit.message = "initial commit";
-        for_commit.log_sha1 = sha1(for_commit.map.toString(), "null", for_commit.message.toString(), for_commit.date.toString());
+        for_commit.log_sha1 = getSha1OfCommit(for_commit);
+        File f = new File(COMMIT_DIR.getPath() + "/" + for_commit.log_sha1);
+        writeObject(f, for_commit);
     }
 
     public void update(String message) {
@@ -73,29 +78,72 @@ public class Commit implements Serializable {
             System.exit(0);
             return;
         }
+        addBranch(current_branch);
         this.message = message;
         date = LocalDateTime.of(LocalDate.now(), LocalTime.now()).toString();
-        String parents_string = (parents == null) ? "null" : parents.toString();
-        log_sha1 = sha1(map.toString(), parents_string, message, date);
+        log_sha1 = getSha1OfCommit(this);
+
         //TODO
     }
 
     // return false no changes have been made.
     private boolean clearStage() {
-        if (Stage.map.isEmpty()) return false;
+        if (Stage.map.isEmpty() && Stage.mapForRm.isEmpty()) return false;
         for (String filename : Stage.map.keySet()) {
-            if (!blobs.getOrDefault(Stage.map.get(filename), false)) {
-                blobs.put(Stage.map.get(filename), true);
+            if (blobs.getOrDefault(Stage.map.get(filename), " ").equals(" ")) {
+                blobs.put(Stage.map.get(filename), FILE_DIR.getPath() + "/" + Stage.map.get(filename));
+                File file = new File(CWD.getPath() + "/" +filename);
+                assert(file.exists());
+                File f = new File(FILE_DIR.getPath() + "/" + Stage.map.get(filename));
+                writeContents(f, readContentsAsString(file));
             }
             map.put(filename, Stage.map.get(filename));
         }
+        for (String filename : Stage.mapForRm.keySet()) {
+            map.remove(filename);
+        }
         Stage.map.clear();
+        Stage.mapForRm.clear();
         return true;
     }
 
-    public void addParent(Commit parent) {
-        for_commit.parents = new ArrayList<>();
-        for_commit.parents.add(parent);
+    public void saveCommit() {
+        File f = new File(COMMIT_DIR.getPath() + "/" + log_sha1);
+        writeObject(f, this);
+    }
+    public void saveAsHead() {
+        File f = new File(COMMIT_DIR.getPath() + "/" + "head");
+        writeObject(f, this);
+    }
+
+    public void addBranch(String name) {
+        branch.add(name);
+    }
+    public static Commit loadCommit(String sha1) {
+        File f = new File(COMMIT_DIR.getPath() + "/" + sha1);
+        return readObject(f, Commit.class);
+    }
+    public static Commit loadHead() {
+        File f = new File(COMMIT_DIR.getPath() + "/head");
+        return readObject(f, Commit.class);
+    }
+
+
+    public String commitInfo() {
+        String t = (this.parents == null) ? "null" : this.parents.toString();
+        return map.toString() + t + message + date;
+    }
+    public List<String> getParents() {
+        return parents;
+    }
+    public String getDate() {
+        return date;
+    }
+    public String getMessage() {
+        return message;
+    }
+    public void addParents(String parent) {
+        parents.add(parent);
     }
     /* TODO: fill in the rest of this class. */
 }

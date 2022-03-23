@@ -7,7 +7,7 @@ import static capers.Utils.*;
 /** Represents a dog that can be serialized.
  * @author TODO
 */
-public class Dog { // TODO
+public class Dog implements Serializable{ // TODO
 
     /** Folder that dogs live in. */
     static final File DOG_FOLDER = null; // TODO (hint: look at the `join`
@@ -57,6 +57,7 @@ public class Dog { // TODO
      */
     public void saveDog() {
         // TODO (hint: don't forget dog names are unique)
+
     }
 
     @Override

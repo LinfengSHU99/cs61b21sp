@@ -1,6 +1,8 @@
 package capers;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
 import static capers.Utils.*;
 
 /** A repository for Capers 
@@ -18,7 +20,7 @@ public class CapersRepository {
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // TODO Hint: look at the `join`
+    static final File CAPERS_FOLDER = new File(".capers"); // TODO Hint: look at the `join`
                                             //      function in Utils
 
     /**
@@ -32,6 +34,14 @@ public class CapersRepository {
      */
     public static void setupPersistence() {
         // TODO
+        CAPERS_FOLDER.mkdir();
+
+        File story = new File("./.capers/story.txt");
+        try {
+            story.createNewFile();
+        } catch (IOException e){
+
+        }
     }
 
     /**
@@ -41,6 +51,23 @@ public class CapersRepository {
      */
     public static void writeStory(String text) {
         // TODO
+        try {
+            File story = new File("./.capers/story.txt");
+            FileOutputStream out = new FileOutputStream(story, true);
+            out.write((text + "\n").getBytes(StandardCharsets.UTF_8));
+            FileInputStream in = new FileInputStream(story);
+            String t = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+//            StringBuilder sb = new StringBuilder();
+//            int n = 0;
+//            while ((n = in.read()) != -1) {
+//                sb.append((char)n);
+//            }
+            System.out.println(t);
+            out.close();
+            in.close();
+        } catch (IOException e) {
+
+        }
     }
 
     /**
@@ -50,6 +77,21 @@ public class CapersRepository {
      */
     public static void makeDog(String name, String breed, int age) {
         // TODO
+        Dog dog = new Dog(name, breed, age);
+        try {
+            File dg = new File("./.capers/" + name);
+            if (!dg.exists()) {
+                dg.createNewFile();
+            }
+            FileOutputStream file_out = new FileOutputStream(dg);
+            ObjectOutputStream d = new ObjectOutputStream(file_out);
+            d.writeObject(dog);
+            d.close();
+            file_out.close();
+        } catch (IOException e) {
+
+        }
+        System.out.println("" + dog);
     }
 
     /**
@@ -60,5 +102,20 @@ public class CapersRepository {
      */
     public static void celebrateBirthday(String name) {
         // TODO
+        try {
+            File dg = new File("./.capers/" + name);
+            FileInputStream file_in = new FileInputStream(dg);
+            ObjectInputStream in = new ObjectInputStream(file_in);
+            Dog dog = (Dog) in.readObject();
+            dog.haveBirthday();
+            FileOutputStream file_out = new FileOutputStream(dg);
+            ObjectOutputStream out = new ObjectOutputStream(file_out);
+            out.writeObject(dog);
+            out.close();
+            in.close();
+            file_out.close();
+            file_in.close();
+        } catch (IOException | ClassNotFoundException c) {
+        }
     }
 }

@@ -1,9 +1,12 @@
 package gitlet;
 
 import java.util.HashMap;
+import static gitlet.Utils.*;
+import static gitlet.Tools.*;
 
 public class Stage {
     static public HashMap<String, String> map = new HashMap<>();
+    static public HashMap<String, String> mapForRm = new HashMap<>();
 //    public Stage() {
 //        set = new HashSet<>();
 //    }
@@ -12,5 +15,9 @@ public class Stage {
             map.put(name, sha);
             //TODO some information
         }
+    }
+    public static void rm(String filename) {
+        mapForRm.put(filename, getSha1OfFile(filename));
+        restrictedDelete(filename);
     }
 }
