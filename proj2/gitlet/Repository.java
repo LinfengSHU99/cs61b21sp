@@ -171,7 +171,7 @@ public class Repository {
     public static void checkoutBranch(String name) {
         String head_sha1 = branch_head.getOrDefault(name, "");
         if (head_sha1.equals("")) printAndExit("No such branch exists.");
-        if (head_sha1.equals(current_branch)) printAndExit("No need to checkout the current branch.");
+        if (name.equals(current_branch)) printAndExit("No need to checkout the current branch.");
         Commit temp = loadCommit(head_sha1);
         List<String> file_list = plainFilenamesIn(CWD);
         assert file_list != null;
