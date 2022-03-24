@@ -70,10 +70,11 @@ public class Repository {
     public static void commit(String message) {
         for_commit.update(message);
         branch_head.put(current_branch, for_commit.log_sha1);
-        for_commit.saveCommit();
-        for_commit.saveAsHead();
-        all_commits.add(for_commit.log_sha1);
-        for_commit = new Commit(for_commit);
+        head = for_commit;
+        head.saveCommit();
+        head.saveAsHead();
+        all_commits.add(head.log_sha1);
+        for_commit = new Commit(head);
     }
     public static void status() {
         System.out.println("=== Branches ===");
@@ -190,6 +191,8 @@ public class Repository {
             writeContents(overwrite_file, content);
         }
         current_branch = name;
+        head = temp;
+        for_commit = new Commit(head);
         Stage.mapForRm.clear();
         Stage.map.clear();
     }
@@ -359,7 +362,10 @@ public class Repository {
             Stage.mapForRm = readObject(f, Stage.mapForRm.getClass());
         }
         f = new File(COMMIT_DIR.getPath() + "/head");
-        if (f.exists()) head = readObject(f, Commit.class);
+        if (f.exists()) {
+            String s = readContentsAsString(f);
+            head = loadCommit(s);
+        }
         f = new File(GITLET_DIR.getPath() + "/current_branch");
         if (f.exists()) current_branch = readContentsAsString(f);
         f = new File(GITLET_DIR.getPath() + "/branch_head");
@@ -382,5 +388,10 @@ public class Repository {
         writeObject(stage_info2, Stage.mapForRm);
         File all_commits_info = new File(GITLET_DIR.getPath() + "/all_commits_info");
         writeObject(all_commits_info, all_commits);
+        if (head != null) {
+            head.saveCommit();
+            head.saveAsHead();
+        }
+
     }
 }

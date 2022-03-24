@@ -120,19 +120,22 @@ public class Commit implements Serializable {
     }
     public void saveAsHead() {
         File f = new File(COMMIT_DIR.getPath() + "/" + "head");
-        writeObject(f, this);
+//        writeObject(f, this);
+        writeContents(f, this.log_sha1);
     }
 
     public void addBranch(String name) {
         branch.add(name);
     }
+
     public static Commit loadCommit(String sha1) {
         File f = new File(COMMIT_DIR.getPath() + "/" + sha1);
         return readObject(f, Commit.class);
     }
     public static Commit loadHead() {
         File f = new File(COMMIT_DIR.getPath() + "/head");
-        return readObject(f, Commit.class);
+//        return readObject(f, Commit.class);
+        return loadCommit(readContentsAsString(f));
     }
 
 
