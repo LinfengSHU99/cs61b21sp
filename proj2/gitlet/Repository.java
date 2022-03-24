@@ -316,7 +316,7 @@ public class Repository {
         }
         String message = "Merged " + branch_name + " into " + current_branch + ".";
         if (conflict) {
-            message += " Encountered a merge conflict.";
+            System.out.println("Encountered a merge conflict.");
         }
         for_commit.update(message);
         head = for_commit;
