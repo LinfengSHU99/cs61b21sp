@@ -254,10 +254,13 @@ public class Repository {
             return;
         }
         Commit ancestor = Commit.loadCommit(common_ancestor);
+        System.out.println(ancestor.getMessage());
+        List<String> existed_files = plainFilenamesIn(CWD);
         Set<String> cur_file_set = cur_branch_head.map.keySet();
         for (String filename : given_branch_head.map.keySet()) {
             if (!ancestor.map.getOrDefault(filename, "").equals(given_branch_head.map.get(filename))) {
-                if (!cur_branch_head.map.containsKey(filename)) printAndExit("There is an untracked file in the way; delete it, or add and commit it first.");
+                if (!cur_branch_head.map.containsKey(filename) && existed_files.contains(filename))
+                    printAndExit("There is an untracked file in the way; delete it, or add and commit it first.");
             }
         }
         boolean conflict = false;
@@ -300,7 +303,7 @@ public class Repository {
         }
         // file which doesn't exist in given branch.
         for (String filename : cur_file_set) {
-            String anc_sha1 = ancestor.map.get(filename);
+            String anc_sha1 = ancestor.map.getOrDefault(filename, "");
             String cur_sha1 = cur_branch_head.map.get(filename);
             // 6
             if (anc_sha1.equals(cur_sha1)) {

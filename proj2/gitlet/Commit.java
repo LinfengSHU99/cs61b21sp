@@ -49,7 +49,7 @@ public class Commit implements Serializable {
         date1.setTime(0);
         String pattern = "EEE MMM d HH:mm:ss YYYY Z";
 
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.ENGLISH);
         date = sdf.format(date1);
         if (parent_arr.length > 0) {
             parents = new ArrayList<>();
@@ -86,7 +86,7 @@ public class Commit implements Serializable {
         this.message = message;
 //        date = LocalDateTime.of(LocalDate.now(), LocalTime.now()).toString();
         String pattern = "EEE MMM d HH:mm:ss YYYY Z";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.ENGLISH);
         date = sdf.format(new Date());
         log_sha1 = getSha1OfCommit(this);
 
@@ -108,6 +108,7 @@ public class Commit implements Serializable {
         }
         for (String filename : Stage.mapForRm.keySet()) {
             map.remove(filename);
+            restrictedDelete(filename);
         }
         Stage.map.clear();
         Stage.mapForRm.clear();
