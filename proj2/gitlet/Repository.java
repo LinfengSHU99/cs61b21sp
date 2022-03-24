@@ -116,8 +116,8 @@ public class Repository {
             System.out.println(filename);
         }
         System.out.println("");
-        System.out.println("=== Modifications Not Staged For Commit ===");
-        System.out.println("=== Untracked Filed ===");
+        System.out.println("=== Modifications Not Staged For Commit ===\n");
+        System.out.println("=== Untracked Filed ===\n");
     }
     public static void rm(String filename) {
         boolean flag = true;
