@@ -117,7 +117,7 @@ public class Repository {
         }
         System.out.println("");
         System.out.println("=== Modifications Not Staged For Commit ===\n");
-        System.out.println("=== Untracked Filed ===\n");
+        System.out.println("=== Untracked Files ===\n");
     }
     public static void rm(String filename) {
         boolean flag = true;
