@@ -314,13 +314,19 @@ public class Repository {
 
             }
             // 8
+            // TODO optimize code
             else if (!anc_sha1.equals("")){
                 conflict = true;
+                String given_sha1 = given_branch_head.map.getOrDefault(filename, "");
                 File overwrite_file = new File(CWD.getPath() + "/" + filename);
                 File reference_file = new File(FILE_DIR.getPath() + "/" + cur_sha1);
                 String text = "<<<<<<< HEAD\n";
                 text += readContentsAsString(reference_file);
                 text += "=======\n";
+                if (!given_sha1.equals("")) {
+                    reference_file = new File(FILE_DIR.getPath() + "/" + given_sha1);
+                    text += readContentsAsString(reference_file);
+                }
                 text += ">>>>>>>\n";
                 writeContents(overwrite_file, text);
                 Stage.map.put(filename, getSha1OfFile(filename));
