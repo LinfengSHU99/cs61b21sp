@@ -254,7 +254,7 @@ public class Repository {
             return;
         }
         Commit ancestor = Commit.loadCommit(common_ancestor);
-        System.out.println(ancestor.getMessage());
+//        System.out.println(ancestor.getMessage());
         List<String> existed_files = plainFilenamesIn(CWD);
         Set<String> cur_file_set = cur_branch_head.map.keySet();
         for (String filename : given_branch_head.map.keySet()) {
