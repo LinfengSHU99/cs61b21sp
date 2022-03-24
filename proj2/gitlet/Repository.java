@@ -313,6 +313,18 @@ public class Repository {
             else if (anc_sha1.equals("")) {
 
             }
+            // 8
+            else if (!anc_sha1.equals("")){
+                conflict = true;
+                File overwrite_file = new File(CWD.getPath() + "/" + filename);
+                File reference_file = new File(FILE_DIR.getPath() + "/" + cur_sha1);
+                String text = "<<<<<<< HEAD\n";
+                text += readContentsAsString(reference_file);
+                text += "=======\n";
+                text += ">>>>>>>\n";
+                writeContents(overwrite_file, text);
+                Stage.map.put(filename, getSha1OfFile(filename));
+            }
         }
         String message = "Merged " + branch_name + " into " + current_branch + ".";
         if (conflict) {
