@@ -316,12 +316,13 @@ public class Repository {
             message += " Encountered a merge conflict.";
         }
         for_commit.update(message);
-        branch_head.put(current_branch, for_commit.log_sha1);
-        for_commit.addParents(given_branch_head.log_sha1);
-        for_commit.saveCommit();
-        for_commit.saveAsHead();
-        all_commits.add(for_commit.log_sha1);
-        for_commit = new Commit(for_commit);
+        head = for_commit;
+        branch_head.put(current_branch, head.log_sha1);
+        head.addParents(given_branch_head.log_sha1);
+        head.saveCommit();
+        head.saveAsHead();
+        all_commits.add(head.log_sha1);
+        for_commit = new Commit(head);
         // TODO implementation for standard scenarios
     }
 
